@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discount Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Discount Calculator</h1>
+    <form id="orderForm">
+        <div class="products">
+            <!-- Repeat for each product -->
+            <div class="product">
+                <label for="product1">Blend Barik: </label>
+                <input type="number" id="product1" name="product1" min="0" value="0">
+            </div>
+            <div class="product">
+                <label for="product2">Cnidus Syrah: </label>
+                <input type="number" id="product2" name="product2" min="0" value="0">
+            </div>
+            <!-- Add more products as needed -->
+        </div>
+        <button type="button" onclick="calculateDiscount()">Calculate Discount</button>
+    </form>
+
+    <div id="results">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
