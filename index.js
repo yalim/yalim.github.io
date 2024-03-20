@@ -4,6 +4,20 @@ const products = [
     { name: "Silenus Chardonnay 75cl", price: 500 },
     { name: "Silenus Fume Blanc 75cl", price: 530 },
     { name: "Datça Blush 75cl", price: 460 },
+    { name: "Blend Barik 75cl", price: 460 },
+    { name: "Cnidus Syrah 75cl", price: 550 },
+    { name: "Cnidus Cabernet Sauvignon 75cl", price: 550 },
+    { name: "Cnidus Ök-Boğ 75cl", price: 550 },
+    { name: "Cnidus Merlot 75cl", price: 550 },
+    { name: "Cnidus Boğazkere 75cl", price: 550 },
+    { name: "Cnidus Öküzgözü 75cl", price: 550 },
+    { name: "Kaldı 75cl", price: 680 },
+    { name: "Grand Reserve 75cl", price: 920 },
+    { name: "Yarı Tatlı 75cl", price: 425 },
+    { name: "Sauv. Blanc 37.5cl (Yarı miktar yazılacak)", price: 270 },
+    { name: "Blend Barik 37.5cl (Yarı miktar yazılacak)", price: 250 },
+    { name: "Datça Blush 37.5cl (Yarı miktar yazılacak)", price: 250 },
+
     // Add more products as needed
 ];
 
@@ -35,8 +49,8 @@ function calculateDiscount() {
     let totalDiscount = 0;
     let totalPriceBeforeDiscount = 0;
 
-    let discountThresholds = [60, 180, 300]; // Thresholds at which discount rates change
-    let discountRates = [0.20, 0.24, 0.28, 0.33]; // Discount rates for each threshold
+    let discountThresholds = [60, 180, 300, 420, 540]; // Thresholds at which discount rates change
+    let discountRates = [0.20, 0.24, 0.28, 0.33, 0.38, 0.4]; // Discount rates for each threshold
 
     // Track the remaining quantity for the current discount tier
     let remainingQuantityForCurrentDiscount = discountThresholds[0];
@@ -74,10 +88,10 @@ function calculateDiscount() {
     // Display results
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
-        <p>Toplam Miktar: ${totalQuantity}</p>
+        <p>Toplam miktar: ${totalQuantity}</p>
         <p>İndirim öncesi fiyat: TRY ${totalPriceBeforeDiscount.toFixed(2)}</p>
-        <p>Toplam İndirim: TRY ${totalDiscount.toFixed(2)}</p>
-        <p>İndirim sonrası KDV HARİÇ Fiyat: TRY ${totalPriceAfterDiscount.toFixed(2)}</p>
+        <p>Toplam indirim: TRY ${totalDiscount.toFixed(2)}</p>
+        <p>İndirim sonrası KDV HARİÇ fiyat: TRY ${totalPriceAfterDiscount.toFixed(2)}</p>
         <p>Ortalama İndirim: ${averageDiscountRate.toFixed(2)}%</p>
     `;
 }
