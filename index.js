@@ -1,38 +1,83 @@
+// Define your products and prices here, accessible globally
+const products = [
+    { name: "Silenus Sauvignon Blanc 75cl", price:  500},
+    { name: "Silenus Chardonnay 75cl", price: 500 },
+    { name: "Silenus Fume Blanc 75cl", price: 530 },
+    { name: "Datça Blush 75cl", price: 460 },
+    // Add more products as needed
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const productsContainer = document.querySelector('.products');
+    products.forEach((product, index) => {
+        const productDiv = document.createElement('div');
+        productDiv.classList.add('product');
+
+        const label = document.createElement('label');
+        label.setAttribute('for', `product${index}`);
+        label.textContent = `${product.name}: `;
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `product${index}`;
+        input.name = `product${index}`;
+        input.min = 0;
+        input.value = 0;
+
+        productDiv.appendChild(label);
+        productDiv.appendChild(input);
+        productsContainer.appendChild(productDiv);
+    });
+});
+
 function calculateDiscount() {
-    const form = document.getElementById('orderForm');
-    const resultsDiv = document.getElementById('results');
     let totalQuantity = 0;
-    let totalWithoutDiscount = 0;
-    const prices = [460, 550]; // Example prices for each product. Update as needed.
+    let totalDiscount = 0;
+    let totalPriceBeforeDiscount = 0;
 
-    // Ensure you have the correct number of products; adjust the loop as necessary
-    for (let i = 1; i <= 14; i++) {
-        const qtyInput = form['product' + i];
-        const qty = qtyInput && !isNaN(qtyInput.value) ? parseInt(qtyInput.value, 10) : 0;
-        totalQuantity += qty;
-        // Ensure you cycle through your prices array correctly
-        totalWithoutDiscount += qty * prices[(i - 1) % prices.length]; // Adjust based on actual product price
-    }
+    let discountThresholds = [60, 180, 300]; // Thresholds at which discount rates change
+    let discountRates = [0.20, 0.24, 0.28, 0.33]; // Discount rates for each threshold
 
-    // Calculate discount based on totalQuantity
-    let discount = 0;
-    if (totalQuantity <= 60) {
-        discount = totalWithoutDiscount * 0.20;
-    } else if (totalQuantity <= 120) {
-        discount = (60 * 0.20 * prices[0]) + ((totalQuantity - 60) * 0.24 * prices[0]); // Example adjustment
-    } else {
-        discount = (60 * 0.20 * prices[0]) + (60 * 0.24 * prices[0]) + ((totalQuantity - 120) * 0.28 * prices[0]); // Example adjustment
-    }
+    // Track the remaining quantity for the current discount tier
+    let remainingQuantityForCurrentDiscount = discountThresholds[0];
+    let currentDiscountIndex = 0;
 
-    const totalWithDiscount = totalWithoutDiscount - discount;
-    const averageDiscountRate = (discount / totalWithoutDiscount) * 100;
+    products.forEach((product, index) => {
+        let quantity = parseInt(document.getElementById(`product${index}`).value, 10) || 0;
+        let productTotalPrice = quantity * product.price;
+        totalPriceBeforeDiscount += productTotalPrice;
+
+        while (quantity > 0) {
+            if (quantity <= remainingQuantityForCurrentDiscount) {
+                totalDiscount += quantity * product.price * discountRates[currentDiscountIndex];
+                remainingQuantityForCurrentDiscount -= quantity;
+                break; // Move to next product
+            } else {
+                totalDiscount += remainingQuantityForCurrentDiscount * product.price * discountRates[currentDiscountIndex];
+                quantity -= remainingQuantityForCurrentDiscount;
+
+                // Move to the next discount tier
+                currentDiscountIndex++;
+                if (currentDiscountIndex < discountThresholds.length) {
+                    remainingQuantityForCurrentDiscount = discountThresholds[currentDiscountIndex] - discountThresholds[currentDiscountIndex - 1];
+                } else {
+                    remainingQuantityForCurrentDiscount = Infinity; // Last tier
+                }
+            }
+        }
+        totalQuantity += parseInt(document.getElementById(`product${index}`).value, 10) || 0;
+    });
+
+    let totalPriceAfterDiscount = totalPriceBeforeDiscount - totalDiscount;
+    let averageDiscountRate = (totalDiscount / totalPriceBeforeDiscount) * 100;
 
     // Display results
+    const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
-        <p>Total Quantity: ${totalQuantity}</p>
-        <p>Total Without Discount: TRY ${totalWithoutDiscount.toFixed(2)}</p>
-        <p>Discount: TRY ${discount.toFixed(2)}</p>
-        <p>Total With Discount: TRY ${totalWithDiscount.toFixed(2)}</p>
-        <p>Average Discount Rate: ${averageDiscountRate.toFixed(2)}%</p>
+        <p>Toplam Miktar: ${totalQuantity}</p>
+        <p>İndirim öncesi fiyat: TRY ${totalPriceBeforeDiscount.toFixed(2)}</p>
+        <p>Toplam İndirim: TRY ${totalDiscount.toFixed(2)}</p>
+        <p>İndirim sonrası KDV HARİÇ Fiyat: TRY ${totalPriceAfterDiscount.toFixed(2)}</p>
+        <p>Ortalama İndirim: ${averageDiscountRate.toFixed(2)}%</p>
     `;
 }
